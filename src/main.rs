@@ -12,6 +12,7 @@ use serenity::framework::standard::{
     CommandResult, StandardFramework,
 };
 use serenity::model::channel::Message;
+use serenity::utils::Colour;
 use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -110,6 +111,12 @@ async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
         Rarity::Three => ":star::star::star:",
     };
 
+    let rarity_colour = match student.rarity {
+        Rarity::One => Colour::from_rgb(227, 234, 240),
+        Rarity::Two => Colour::from_rgb(255, 248, 124),
+        Rarity::Three => Colour::from_rgb(253, 198, 229),
+    };
+
     channel
         .send_message(ctx, |m| {
             m.reference_message(msg).embed(|embed| {
@@ -123,6 +130,7 @@ async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
                             .icon_url(icon_url)
                             .text("Image Source: https://thearchive.gg")
                     })
+                    .colour(rarity_colour)
             })
         })
         .await?;
