@@ -222,6 +222,8 @@ async fn my_help(
     groups: &[&'static CommandGroup],
     owners: HashSet<UserId>,
 ) -> CommandResult {
+    let author_name = format!("{}#{}", msg.author.name, msg.author.discriminator);
+    info!("{} asked for help", author_name);
     let _ = help_commands::with_embeds(context, msg, args, help_options, groups, owners).await;
     Ok(())
 }
