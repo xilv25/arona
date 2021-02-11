@@ -4,7 +4,7 @@ use bluearch_recruitment::i18n::Language;
 use bluearch_recruitment::student::Student;
 use dotenv::dotenv;
 use lazy_static::lazy_static;
-use log::{error, info};
+use log::{debug, error, info, warn};
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 use serenity::framework::standard::{
@@ -17,7 +17,7 @@ use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[group]
-#[commands(ping)]
+#[commands(ping, source)]
 struct General;
 
 #[group]
@@ -31,6 +31,10 @@ impl EventHandler for Handler {}
 
 const STUDENTS_JSON: &str = include_str!("../data/students.json");
 const CDN_URL: &str = "https://rerollcdn.com/BlueArchive";
+const BOT_SOURCE: &str = "https://git.paoda.moe/paoda/arona";
+const GACHA_SOURCE: &str = "https://github.com/Paoda/bluearch-recruitment";
+const IMG_SOURCE: &str = "https://thearchive.gg";
+const BANNER_IMG_URL: &str = "https://static.wikia.nocookie.net/blue-archive/images/e/e0/Gacha_Banner_01.png/revision/latest/";
 
 lazy_static! {
     static ref STUDENTS: Vec<Student> = serde_json::from_str(STUDENTS_JSON).unwrap();
@@ -47,17 +51,33 @@ async fn main() {
         .group(&GENERAL_GROUP)
         .group(&RECRUITMENTCOMMANDS_GROUP);
 
+    debug!("Initialized the StandardFramework struct");
+
     // Login with a bot token from the environment
-    let token = env::var("DISCORD_BOT_TOKEN").expect("DISCORD_BOT_TOKEN was not set.");
-    info!("アロナ has started with Bot Token: {}", &token);
+    let mut client = match env::var("DISCORD_DEV_BOT_TOKEN") {
+        Ok(token) => {
+            debug!("DISCORD_ENV_BOT_TOKEN is present. Running as アロナDev");
+            let client = Client::builder(&token)
+                .event_handler(Handler)
+                .framework(framework)
+                .await
+                .expect("Failed to create Serenity Client");
+            info!("アロナDev Client has begun with Token: {}", &token);
+            client
+        }
+        Err(_) => {
+            debug!("DISCORD_ENV_BOT_TOKEN is not present. Running as アロナ");
+            let token = env::var("DISCORD_BOT_TOKEN").expect("DISCORD_BOT_TOKEN was not set.");
+            let client = Client::builder(&token)
+                .event_handler(Handler)
+                .framework(framework)
+                .await
+                .expect("Failed to create Serenity Client");
 
-    let mut client = Client::builder(token)
-        .event_handler(Handler)
-        .framework(framework)
-        .await
-        .expect("Failed to create Serenity Client");
-
-    info!("Successfully created the Serenity Client");
+            info!("アロナ Client has begun with Token: {}", &token);
+            client
+        }
+    };
 
     // start listening for events by starting a single shard
     if let Err(why) = client.start().await {
@@ -68,17 +88,20 @@ async fn main() {
 #[command]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     let author_name = format!("{}#{}", msg.author.name, msg.author.discriminator);
-    info!("Ping received from: {}", author_name);
+    info!("Ping requested from {}", author_name);
 
     let now = SystemTime::now();
 
     match now.duration_since(UNIX_EPOCH) {
         Ok(now_timestamp) => {
             let diff = now_timestamp.as_millis() - msg.timestamp.timestamp_millis() as u128;
+            info!("It took {}ms to receive {}'s ping", diff, author_name);
+
             msg.reply(ctx, format!("Pong! (Response: {}ms)", diff))
                 .await?;
         }
         Err(_) => {
+            warn!("Failed to calculate UNIX Timestamp");
             msg.reply(ctx, "Pong! (Response: ??ms)").await?;
         }
     }
@@ -89,7 +112,7 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 #[command]
 async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
     let author_name = format!("{}#{}", msg.author.name, msg.author.discriminator);
-    info!("{} Requested a single roll", author_name);
+    info!("{} requested a single roll", author_name);
 
     let channel = msg.channel_id;
     let student = BANNER.roll();
@@ -140,8 +163,37 @@ async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn banner(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(ctx, format!("Current Banner: {}", BANNER.name))
+    let author_name = format!("{}#{}", msg.author.name, msg.author.discriminator);
+    info!("{} requested banner information", author_name);
+
+    let channel = msg.channel_id;
+    let banner_eng = BANNER.name.get(Language::English).unwrap();
+
+    channel
+        .send_message(ctx, |m| {
+            m.embed(|embed| {
+                embed
+                    .image(BANNER_IMG_URL)
+                    .title(BANNER.name.clone())
+                    .description(banner_eng)
+            })
+        })
         .await?;
+
+    Ok(())
+}
+
+#[command]
+async fn source(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.reply(
+        ctx,
+        format!(
+            "Bot Source Code: {}\n Gacha Source Code: {}\n Image Source: {}",
+            BOT_SOURCE, GACHA_SOURCE, IMG_SOURCE
+        ),
+    )
+    .await?;
+
     Ok(())
 }
 
