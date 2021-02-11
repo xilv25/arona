@@ -8,12 +8,15 @@ use log::{debug, error, info, warn};
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 use serenity::framework::standard::{
-    macros::{command, group},
-    CommandResult, StandardFramework,
+    help_commands,
+    macros::{command, group, help},
+    Args, CommandGroup, CommandResult, HelpOptions, StandardFramework,
 };
 use serenity::model::channel::Message;
+use serenity::model::id::UserId;
 use serenity::utils::Colour;
-use std::env;
+use std::collections::HashSet;
+use std::env::{self};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[group]
@@ -35,6 +38,7 @@ const BOT_SOURCE: &str = "https://git.paoda.moe/paoda/arona";
 const GACHA_SOURCE: &str = "https://github.com/Paoda/bluearch-recruitment";
 const IMG_SOURCE: &str = "https://thearchive.gg";
 const BANNER_IMG_URL: &str = "https://static.wikia.nocookie.net/blue-archive/images/e/e0/Gacha_Banner_01.png/revision/latest/";
+const BLUE_ARCHIVE_BLUE: Colour = Colour::from_rgb(0, 215, 251);
 
 lazy_static! {
     static ref STUDENTS: Vec<Student> = serde_json::from_str(STUDENTS_JSON).unwrap();
@@ -49,7 +53,8 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("!")) // set the bot's prefix to "!"
         .group(&GENERAL_GROUP)
-        .group(&RECRUITMENTCOMMANDS_GROUP);
+        .group(&RECRUITMENTCOMMANDS_GROUP)
+        .help(&MY_HELP);
 
     debug!("Initialized the StandardFramework struct");
 
@@ -86,6 +91,7 @@ async fn main() {
 }
 
 #[command]
+#[aliases(response)]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     let author_name = format!("{}#{}", msg.author.name, msg.author.discriminator);
     info!("Ping requested from {}", author_name);
@@ -110,6 +116,7 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[aliases(pull)]
 async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
     let author_name = format!("{}#{}", msg.author.name, msg.author.discriminator);
     info!("{} requested a single roll", author_name);
@@ -176,6 +183,7 @@ async fn banner(ctx: &Context, msg: &Message) -> CommandResult {
                     .image(BANNER_IMG_URL)
                     .title(BANNER.name.clone())
                     .description(banner_eng)
+                    .colour(BLUE_ARCHIVE_BLUE)
             })
         })
         .await?;
@@ -184,16 +192,37 @@ async fn banner(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[aliases(github, code, dev)]
 async fn source(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(
-        ctx,
-        format!(
-            "Bot Source Code: {}\n Gacha Source Code: {}\n Image Source: {}",
-            BOT_SOURCE, GACHA_SOURCE, IMG_SOURCE
-        ),
-    )
-    .await?;
+    let author_name = format!("{}#{}", msg.author.name, msg.author.discriminator);
+    info!("{} requested bot / gacha / image sources", author_name);
+    let channel = msg.channel_id;
 
+    channel
+        .send_message(ctx, |m| {
+            m.embed(|embed| {
+                embed
+                    .field("Bot Source", BOT_SOURCE, false)
+                    .field("Gacha Source", GACHA_SOURCE, false)
+                    .field("Image Source", IMG_SOURCE, false)
+                    .colour(BLUE_ARCHIVE_BLUE)
+            })
+        })
+        .await?;
+
+    Ok(())
+}
+
+#[help]
+async fn my_help(
+    context: &Context,
+    msg: &Message,
+    args: Args,
+    help_options: &'static HelpOptions,
+    groups: &[&'static CommandGroup],
+    owners: HashSet<UserId>,
+) -> CommandResult {
+    let _ = help_commands::with_embeds(context, msg, args, help_options, groups, owners).await;
     Ok(())
 }
 
