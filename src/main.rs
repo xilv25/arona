@@ -1,5 +1,5 @@
 use bluearch_recruitment::banner::{Banner, BannerBuilder};
-use bluearch_recruitment::gacha::{GachaBuilder, Recruitment};
+use bluearch_recruitment::gacha::{GachaBuilder, Rarity, Recruitment};
 use bluearch_recruitment::i18n::Language;
 use bluearch_recruitment::student::Student;
 use dotenv::dotenv;
@@ -20,7 +20,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 struct General;
 
 #[group]
-#[commands(roll, roll10, banner)]
+#[commands(roll, banner)]
 struct RecruitmentCommands;
 
 struct Handler;
@@ -29,6 +29,7 @@ struct Handler;
 impl EventHandler for Handler {}
 
 const STUDENTS_JSON: &str = include_str!("../data/students.json");
+const CDN_URL: &str = "https://rerollcdn.com/BlueArchive";
 
 lazy_static! {
     static ref STUDENTS: Vec<Student> = serde_json::from_str(STUDENTS_JSON).unwrap();
@@ -89,38 +90,43 @@ async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
     let author_name = format!("{}#{}", msg.author.name, msg.author.discriminator);
     info!("{} Requested a single roll", author_name);
 
+    let channel = msg.channel_id;
     let student = BANNER.roll();
 
-    msg.reply(
-        ctx,
-        format!(
-            "You Pulled: {} {}",
-            student.name.get(Language::English).unwrap(),
-            student.rarity
-        ),
-    )
-    .await?;
+    let eng_name = student.name.get(Language::English).unwrap();
+    let url_name = if eng_name == "Junko" {
+        "Zunko"
+    } else {
+        &eng_name
+    };
 
-    Ok(())
-}
+    let img_url = format!("{}/Characters/{}.png", CDN_URL, url_name);
+    let title_url = format!("https://www.thearchive.gg/characters/{}", url_name);
+    let icon_url = format!("{}/Icons/icon-brand.png", CDN_URL);
 
-#[command]
-async fn roll10(ctx: &Context, msg: &Message) -> CommandResult {
-    let author_name = format!("{}#{}", msg.author.name, msg.author.discriminator);
-    info!("{} Requested a 10-roll", author_name);
+    let rarity_str = match student.rarity {
+        Rarity::One => ":star:",
+        Rarity::Two => ":star::star:",
+        Rarity::Three => ":star::star::star:",
+    };
 
-    let students = BANNER.roll10();
-    let mut response = "You Pulled:\n".to_string();
+    channel
+        .send_message(ctx, |m| {
+            m.reference_message(msg).embed(|embed| {
+                embed
+                    .image(img_url)
+                    .title(format!("{}", student.name))
+                    .description(format!("{}\t{}", eng_name, rarity_str))
+                    .url(title_url)
+                    .footer(|footer| {
+                        footer
+                            .icon_url(icon_url)
+                            .text("Image Source: https://thearchive.gg")
+                    })
+            })
+        })
+        .await?;
 
-    for student in students.iter() {
-        response += &format!(
-            "{} {}\n",
-            student.name.get(Language::English).unwrap(),
-            student.rarity
-        );
-    }
-
-    msg.reply(ctx, response).await?;
     Ok(())
 }
 
