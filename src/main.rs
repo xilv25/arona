@@ -119,7 +119,7 @@ async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
 
     channel
         .send_message(ctx, |m| {
-            m.reference_message(msg).embed(|embed| {
+            m.embed(|embed| {
                 embed
                     .image(img_url)
                     .title(format!("{}", student.name))
