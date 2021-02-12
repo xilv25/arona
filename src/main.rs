@@ -1,5 +1,5 @@
 use bluearch_recruitment::banner::{Banner, BannerBuilder};
-use bluearch_recruitment::gacha::{GachaBuilder, Rarity, Recruitment};
+use bluearch_recruitment::gacha::{GachaBuilder, Rarity, Recruitment as RecruitmentTrait};
 use bluearch_recruitment::i18n::Language;
 use bluearch_recruitment::student::Student;
 use dotenv::dotenv;
@@ -29,7 +29,7 @@ struct General;
 
 #[group]
 #[commands(roll, banner, roll10)]
-struct RecruitmentCommands;
+struct Recruitment;
 
 struct Handler;
 
@@ -60,7 +60,7 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("!")) // set the bot's prefix to "!"
         .group(&GENERAL_GROUP)
-        .group(&RECRUITMENTCOMMANDS_GROUP)
+        .group(&RECRUITMENT_GROUP)
         .help(&MY_HELP);
 
     debug!("Initialized the StandardFramework struct");
