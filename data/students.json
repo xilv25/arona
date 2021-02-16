@@ -403,5 +403,14 @@
             }
         },
         "rarity": 1
+    }, 
+    {
+        "name": {
+            "translations": {
+                "eng": "Mashiro",
+                "jpn": "マシロ"
+            }
+        },
+        "rarity": 3
     }
 ]
