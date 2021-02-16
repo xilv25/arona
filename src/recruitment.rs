@@ -18,13 +18,14 @@ use std::time::Instant;
 
 const STUDENTS_JSON: &str = include_str!("../data/students.json");
 const CDN_URL: &str = "https://rerollcdn.com/BlueArchive";
-const BANNER_IMG_URL: &str = "https://static.wikia.nocookie.net/blue-archive/images/e/e0/Gacha_Banner_01.png/revision/latest/";
+const BANNER_IMG_URL: &str =
+    "https://static.wikia.nocookie.net/blue-archive/images/6/65/Gacha_Banner_02.png";
 const THUMB_WIDTH: u32 = 202; // OG: 404 (2020-02-11) from https://thearchive.gg
 const THUMB_HEIGHT: u32 = 228; // OG: 456 (2020-02-11) from https://thearchive.gg
 
 lazy_static! {
     static ref STUDENTS: Vec<Student> = serde_json::from_str(STUDENTS_JSON).unwrap();
-    static ref BANNER: Banner = create_banner();
+    static ref BANNER: Banner = create_2021_02_11_mashiro_banner();
 }
 
 pub async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
@@ -181,10 +182,13 @@ pub async fn banner(ctx: &Context, msg: &Message) -> CommandResult {
     Ok(())
 }
 
-pub fn create_banner() -> Banner {
+pub fn create_2021_02_04_hoshino_shiroko_banner() -> Banner {
+    // TODO: Make who's in the gacha pool explicit
+    // e.g. state who we're adding to the banner, rather than who we're
+    // removing
     let pool: Vec<Student> = STUDENTS
         .iter()
-        .filter(|student| student.name != "ノゾミ")
+        .filter(|student| student.name != "ノゾミ" || student.name == "マシロ")
         .cloned()
         .collect();
 
@@ -200,9 +204,36 @@ pub fn create_banner() -> Banner {
         .finish()
         .unwrap();
 
-    BannerBuilder::new("ピックアップ募集")
+    BannerBuilder::new("拝啓、はじまりの季節へ")
         .with_gacha(&gacha)
-        .with_name_translation(Language::English, "Rate-Up Recruitment")
+        .with_name_translation(Language::English, "Dear Sensei, a new season approaches")
+        .with_sparkable_students(&sparkable)
+        .finish()
+        .unwrap()
+}
+
+pub fn create_2021_02_11_mashiro_banner() -> Banner {
+    let pool: Vec<Student> = STUDENTS
+        .iter()
+        .filter(|student| student.name != "ノゾミ")
+        .cloned()
+        .collect();
+
+    let sparkable: Vec<Student> = pool
+        .iter()
+        .filter(|student| student.name == "マシロ")
+        .cloned()
+        .collect();
+
+    let gacha = GachaBuilder::new(79.0, 18.5, 2.5)
+        .with_pool(pool)
+        .with_priority(&sparkable, 0.7)
+        .finish()
+        .unwrap();
+
+    BannerBuilder::new("赤の季節、黒の制服")
+        .with_gacha(&gacha)
+        .with_name_translation(Language::English, "Red Season, Black Uniform")
         .with_sparkable_students(&sparkable)
         .finish()
         .unwrap()
