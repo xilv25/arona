@@ -182,15 +182,19 @@ pub async fn banner(ctx: &Context, msg: &Message) -> CommandResult {
     Ok(())
 }
 
-pub fn create_2021_02_04_hoshino_shiroko_banner() -> Banner {
+fn _create_2021_02_04_hoshino_shiroko_banner() -> Banner {
     // TODO: Make who's in the gacha pool explicit
     // e.g. state who we're adding to the banner, rather than who we're
     // removing
-    let pool: Vec<Student> = STUDENTS
-        .iter()
-        .filter(|student| student.name != "ノゾミ" || student.name == "マシロ")
-        .cloned()
-        .collect();
+    let three_star_students = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ";
+    let two_star_students = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ";
+    let one_star_students =
+        "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
+
+    let mut pool = Vec::new();
+    pool.extend(get_students(three_star_students));
+    pool.extend(get_students(two_star_students));
+    pool.extend(get_students(one_star_students));
 
     let sparkable: Vec<Student> = pool
         .iter()
@@ -212,12 +216,16 @@ pub fn create_2021_02_04_hoshino_shiroko_banner() -> Banner {
         .unwrap()
 }
 
-pub fn create_2021_02_11_mashiro_banner() -> Banner {
-    let pool: Vec<Student> = STUDENTS
-        .iter()
-        .filter(|student| student.name != "ノゾミ")
-        .cloned()
-        .collect();
+fn create_2021_02_11_mashiro_banner() -> Banner {
+    let three_star_students = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ";
+    let two_star_students = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ";
+    let one_star_students =
+        "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
+
+    let mut pool = Vec::new();
+    pool.extend(get_students(three_star_students));
+    pool.extend(get_students(two_star_students));
+    pool.extend(get_students(one_star_students));
 
     let sparkable: Vec<Student> = pool
         .iter()
@@ -237,6 +245,27 @@ pub fn create_2021_02_11_mashiro_banner() -> Banner {
         .with_sparkable_students(&sparkable)
         .finish()
         .unwrap()
+}
+
+fn get_students(student_list: &str) -> Vec<Student> {
+    let names = student_list.split(", ");
+    let mut students = match names.size_hint().1 {
+        Some(size) => Vec::with_capacity(size),
+        None => Vec::new(),
+    };
+
+    for name in names {
+        let maybe_student = STUDENTS.iter().find(|student| student.name == name);
+
+        match maybe_student {
+            Some(student) => {
+                students.push(student.clone());
+            }
+            None => error!("Could not find {} in students.json", name),
+        };
+    }
+
+    students
 }
 
 fn get_rarity_colour(rarity: Rarity) -> Colour {
