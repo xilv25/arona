@@ -18,14 +18,17 @@ use std::time::Instant;
 
 const STUDENTS_JSON: &str = include_str!("../data/students.json");
 const CDN_URL: &str = "https://rerollcdn.com/BlueArchive";
-const BANNER_IMG_URL: &str =
-    "https://static.wikia.nocookie.net/blue-archive/images/6/65/Gacha_Banner_02.png";
+const BANNER_IMG_URL: &str = "https://pbs.twimg.com/media/EuzV9rdUUAAD2jx?format=jpg&name=large";
 const THUMB_WIDTH: u32 = 202; // OG: 404 (2020-02-11) from https://thearchive.gg
 const THUMB_HEIGHT: u32 = 228; // OG: 456 (2020-02-11) from https://thearchive.gg
 
+const THREE_STAR_RATE: f32 = 2.5;
+const TWO_STAR_RATE: f32 = 18.5;
+const ONE_STAR_RATE: f32 = 79.0;
+
 lazy_static! {
     static ref STUDENTS: Vec<Student> = serde_json::from_str(STUDENTS_JSON).unwrap();
-    static ref BANNER: Banner = create_2021_02_11_mashiro_banner();
+    static ref BANNER: Banner = create_2021_02_25_izuna_banner();
 }
 
 pub async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
@@ -183,28 +186,36 @@ pub async fn banner(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 fn _create_2021_02_04_hoshino_shiroko_banner() -> Banner {
-    // TODO: Make who's in the gacha pool explicit
-    // e.g. state who we're adding to the banner, rather than who we're
-    // removing
-    let three_star_students = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ";
-    let two_star_students = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ";
-    let one_star_students =
+    let three_stars = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ";
+    let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ";
+    let one_stars =
         "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
 
     let mut pool = Vec::new();
-    pool.extend(get_students(three_star_students));
-    pool.extend(get_students(two_star_students));
-    pool.extend(get_students(one_star_students));
+    pool.extend(get_students(three_stars));
+    pool.extend(get_students(two_stars));
+    pool.extend(get_students(one_stars));
 
-    let sparkable: Vec<Student> = pool
+    let hoshino = pool
         .iter()
-        .filter(|student| student.name == "ホシノ" || student.name == "シロコ")
+        .find(|student| student.name == "ホシノ")
         .cloned()
-        .collect();
+        .unwrap()
+        .into_priority_student(0.7 / 2.0);
+
+    let shiroko = pool
+        .iter()
+        .find(|student| student.name == "シロコ")
+        .cloned()
+        .unwrap()
+        .into_priority_student(0.7 / 2.0);
+
+    let sparkable = vec![hoshino.student().clone(), shiroko.student().clone()];
+    let priority = vec![hoshino, shiroko];
 
     let gacha = GachaBuilder::new(79.0, 18.5, 2.5)
         .with_pool(pool)
-        .with_priority(&sparkable, 0.7)
+        .with_priority(&priority)
         .finish()
         .unwrap();
 
@@ -216,32 +227,82 @@ fn _create_2021_02_04_hoshino_shiroko_banner() -> Banner {
         .unwrap()
 }
 
-fn create_2021_02_11_mashiro_banner() -> Banner {
-    let three_star_students = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ";
-    let two_star_students = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ";
-    let one_star_students =
+fn _create_2021_02_11_mashiro_banner() -> Banner {
+    let three_stars = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ";
+    let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ";
+    let one_stars =
         "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
 
     let mut pool = Vec::new();
-    pool.extend(get_students(three_star_students));
-    pool.extend(get_students(two_star_students));
-    pool.extend(get_students(one_star_students));
+    pool.extend(get_students(three_stars));
+    pool.extend(get_students(two_stars));
+    pool.extend(get_students(one_stars));
 
-    let sparkable: Vec<Student> = pool
+    let mashiro = pool
         .iter()
-        .filter(|student| student.name == "マシロ")
+        .find(|student| student.name == "マシロ")
         .cloned()
-        .collect();
+        .unwrap()
+        .into_priority_student(0.7);
+
+    let sparkable = vec![mashiro.student().clone()];
+    let priority = vec![mashiro];
 
     let gacha = GachaBuilder::new(79.0, 18.5, 2.5)
         .with_pool(pool)
-        .with_priority(&sparkable, 0.7)
+        .with_priority(&priority)
         .finish()
         .unwrap();
 
     BannerBuilder::new("赤の季節、黒の制服")
         .with_gacha(&gacha)
         .with_name_translation(Language::English, "Red Season, Black Uniform")
+        .with_sparkable_students(&sparkable)
+        .finish()
+        .unwrap()
+}
+
+fn create_2021_02_25_izuna_banner() -> Banner {
+    // 2021-03-04 https://thearchive.gg does not have Shizuko yet so she will not be in the pool
+
+    let three_stars = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ, イズナ";
+    // let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ, シズコ";
+    let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ";
+    let one_stars =
+        "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
+
+    let mut pool = Vec::new();
+    pool.extend(get_students(three_stars));
+    pool.extend(get_students(two_stars));
+    pool.extend(get_students(one_stars));
+
+    // let shizuko = pool
+    //     .iter()
+    //     .find(|student| student.name == "シズコ")
+    //     .cloned()
+    //     .unwrap()
+    //     .into_priority_student(3.0);
+
+    let izuna = pool
+        .iter()
+        .find(|student| student.name == "イズナ")
+        .cloned()
+        .unwrap()
+        .into_priority_student(0.7);
+
+    let sparkable = vec![izuna.student().clone()];
+    // let priority = vec![izuna, shizuko];
+    let priority = vec![izuna];
+
+    let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
+        .with_pool(pool)
+        .with_priority(&priority)
+        .finish()
+        .unwrap();
+
+    BannerBuilder::new("祭り囃子はしのぶれど")
+        .with_gacha(&gacha)
+        .with_name_translation(Language::English, "The Concealed Festival Band")
         .with_sparkable_students(&sparkable)
         .finish()
         .unwrap()
