@@ -259,11 +259,8 @@ fn _create_2021_02_11_mashiro_banner() -> Banner {
 }
 
 fn create_2021_02_25_izuna_banner() -> Banner {
-    // 2021-03-04 https://thearchive.gg does not have Shizuko yet so she will not be in the pool
-
     let three_stars = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ, イズナ";
-    // let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ, シズコ";
-    let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ";
+    let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ, シズコ";
     let one_stars =
         "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
 
@@ -272,12 +269,12 @@ fn create_2021_02_25_izuna_banner() -> Banner {
     pool.extend(get_students(two_stars));
     pool.extend(get_students(one_stars));
 
-    // let shizuko = pool
-    //     .iter()
-    //     .find(|student| student.name == "シズコ")
-    //     .cloned()
-    //     .unwrap()
-    //     .into_priority_student(3.0);
+    let shizuko = pool
+        .iter()
+        .find(|student| student.name == "シズコ")
+        .cloned()
+        .unwrap()
+        .into_priority_student(3.0);
 
     let izuna = pool
         .iter()
@@ -287,8 +284,7 @@ fn create_2021_02_25_izuna_banner() -> Banner {
         .into_priority_student(0.7);
 
     let sparkable = vec![izuna.student().clone()];
-    // let priority = vec![izuna, shizuko];
-    let priority = vec![izuna];
+    let priority = vec![izuna, shizuko];
 
     let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
         .with_pool(pool)
