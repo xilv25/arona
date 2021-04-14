@@ -22,13 +22,9 @@ const BANNER_IMG_URL: &str = "https://pbs.twimg.com/media/EuzV9rdUUAAD2jx?format
 const THUMB_WIDTH: u32 = 202; // OG: 404 (2020-02-11) from https://thearchive.gg
 const THUMB_HEIGHT: u32 = 228; // OG: 456 (2020-02-11) from https://thearchive.gg
 
-const THREE_STAR_RATE: f32 = 2.5;
-const TWO_STAR_RATE: f32 = 18.5;
-const ONE_STAR_RATE: f32 = 79.0;
-
 lazy_static! {
     static ref STUDENTS: Vec<Student> = serde_json::from_str(STUDENTS_JSON).unwrap();
-    static ref BANNER: Banner = create_2021_02_25_izuna_banner();
+    static ref BANNER: Banner = create_2021_04_08_midori_banner();
 }
 
 pub async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
@@ -92,11 +88,7 @@ pub async fn roll10(ctx: &Context, msg: &Message) -> CommandResult {
     let start = Instant::now();
     for student in students.iter() {
         let eng_name = student.name.get(Language::English).unwrap();
-        let url_name = if eng_name == "Junko" {
-            "Zunko"
-        } else {
-            &eng_name
-        };
+        let url_name = &eng_name;
 
         max_rarity = max_rarity.max(student.rarity);
 
@@ -258,7 +250,7 @@ fn _create_2021_02_11_mashiro_banner() -> Banner {
         .unwrap()
 }
 
-fn create_2021_02_25_izuna_banner() -> Banner {
+fn _create_2021_02_25_izuna_banner() -> Banner {
     let three_stars = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ, イズナ";
     let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ, シズコ";
     let one_stars =
@@ -286,7 +278,7 @@ fn create_2021_02_25_izuna_banner() -> Banner {
     let sparkable = vec![izuna.student().clone()];
     let priority = vec![izuna, shizuko];
 
-    let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
+    let gacha = GachaBuilder::default()
         .with_pool(pool)
         .with_priority(priority)
         .finish()
@@ -321,7 +313,7 @@ fn _create_2021_03_11_haruna_banner() -> Banner {
     let sparkable = vec![haruna.student().clone()];
     let priority = vec![haruna];
 
-    let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
+    let gacha = GachaBuilder::default()
         .with_pool(pool)
         .with_priority(priority)
         .finish()
@@ -359,7 +351,7 @@ fn _create_2021_03_18_aru_banner() -> Banner {
     let sparkable = vec![aru.student().clone()];
     let priority = vec![aru];
 
-    let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
+    let gacha = GachaBuilder::default()
         .with_pool(pool)
         .with_priority(priority)
         .finish()
@@ -368,6 +360,83 @@ fn _create_2021_03_18_aru_banner() -> Banner {
     BannerBuilder::new("悪は一日にして成らず")
         .with_gacha(gacha)
         .with_name_translation(Language::English, "Evil does not grow in a single Day")
+        .with_sparkable_students(sparkable)
+        .finish()
+        .unwrap()
+}
+
+fn _create_2021_03_25_arisu_banner() -> Banner {
+    let three_stars = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ, イズナ, アリス";
+    let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ, シズコ";
+    let one_stars =
+        "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
+
+    let mut pool = Vec::new();
+    pool.extend(get_students(three_stars));
+    pool.extend(get_students(two_stars));
+    pool.extend(get_students(one_stars));
+
+    let arisu = pool
+        .iter()
+        .find(|student| student.name == "アリス")
+        .cloned()
+        .unwrap()
+        .into_priority_student(0.7);
+
+    let sparkable = vec![arisu.student().clone()];
+    let priority = vec![arisu];
+
+    let gacha = GachaBuilder::default()
+        .with_pool(pool)
+        .with_priority(priority)
+        .finish()
+        .unwrap();
+
+    BannerBuilder::new("機械たちは旅立ちの夢を見るか？")
+        .with_gacha(gacha)
+        .with_name_translation(Language::English, "Do Machines Dream of Departure?")
+        .with_sparkable_students(sparkable)
+        .finish()
+        .unwrap()
+}
+
+fn create_2021_04_08_midori_banner() -> Banner {
+    let three_stars = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ, イズナ, アリス, ミドリ";
+    let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ, シズコ, モモイ";
+    let one_stars =
+        "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
+
+    let mut pool = Vec::new();
+    pool.extend(get_students(three_stars));
+    pool.extend(get_students(two_stars));
+    pool.extend(get_students(one_stars));
+
+    let momoi = pool
+        .iter()
+        .find(|student| student.name == "モモイ")
+        .cloned()
+        .unwrap()
+        .into_priority_student(3.0);
+
+    let midori = pool
+        .iter()
+        .find(|student| student.name == "ミドリ")
+        .cloned()
+        .unwrap()
+        .into_priority_student(0.7);
+
+    let sparkable = vec![midori.student().clone()];
+    let priority = vec![midori, momoi];
+
+    let gacha = GachaBuilder::default()
+        .with_pool(pool)
+        .with_priority(priority)
+        .finish()
+        .unwrap();
+
+    BannerBuilder::new("共鳴する風信子")
+        .with_gacha(gacha)
+        .with_name_translation(Language::English, "Resonating Wind Nobuko")
         .with_sparkable_students(sparkable)
         .finish()
         .unwrap()
