@@ -300,6 +300,79 @@ fn create_2021_02_25_izuna_banner() -> Banner {
         .unwrap()
 }
 
+fn _create_2021_03_11_haruna_banner() -> Banner {
+    let three_stars = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ, イズナ";
+    let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ, シズコ";
+    let one_stars =
+        "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
+
+    let mut pool = Vec::new();
+    pool.extend(get_students(three_stars));
+    pool.extend(get_students(two_stars));
+    pool.extend(get_students(one_stars));
+
+    let haruna = pool
+        .iter()
+        .find(|student| student.name == "ハルナ")
+        .cloned()
+        .unwrap()
+        .into_priority_student(0.7);
+
+    let sparkable = vec![haruna.student().clone()];
+    let priority = vec![haruna];
+
+    let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
+        .with_pool(pool)
+        .with_priority(&priority)
+        .finish()
+        .unwrap();
+
+    BannerBuilder::new("その味は身命を賭してでも")
+        .with_gacha(&gacha)
+        .with_name_translation(
+            Language::English,
+            "Even if you risk your life for that taste",
+        )
+        .with_sparkable_students(&sparkable)
+        .finish()
+        .unwrap()
+}
+
+fn _create_2021_03_18_aru_banner() -> Banner {
+    let three_stars = "ヒナ, イオリ, ハルナ, イズミ, アル, スミレ, エイミ, カリン, ネル, マキ, ヒビキ, サヤ, シュン, シロコ, ホシノ, ヒフミ, ツルギ, マシロ, イズナ";
+    let two_stars = "アカリ, ジュンコ, ムツキ, カヨコ, フウカ, ユウカ, アカネ, ハレ, ウタハ, チセ, ツバキ, セリカ, アヤネ, ハスミ, ハナエ, アイリ, シズコ";
+    let one_stars =
+        "チナツ, ハルカ, ジュリ, コタマ, アスナ, コトリ, フィーナ, スズミ, シミコ, セリナ, ヨシミ";
+
+    let mut pool = Vec::new();
+    pool.extend(get_students(three_stars));
+    pool.extend(get_students(two_stars));
+    pool.extend(get_students(one_stars));
+
+    let aru = pool
+        .iter()
+        .find(|student| student.name == "アル")
+        .cloned()
+        .unwrap()
+        .into_priority_student(0.7);
+
+    let sparkable = vec![aru.student().clone()];
+    let priority = vec![aru];
+
+    let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
+        .with_pool(pool)
+        .with_priority(&priority)
+        .finish()
+        .unwrap();
+
+    BannerBuilder::new("悪は一日にして成らず")
+        .with_gacha(&gacha)
+        .with_name_translation(Language::English, "Evil does not grow in a single Day")
+        .with_sparkable_students(&sparkable)
+        .finish()
+        .unwrap()
+}
+
 fn get_students(student_list: &str) -> Vec<Student> {
     let names = student_list.split(", ");
     let mut students = match names.size_hint().1 {
