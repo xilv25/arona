@@ -173,6 +173,24 @@
     {
         "name": {
             "translations": {
+                "eng": "Arisu",
+                "jpn": "アリス"
+            }
+        },
+        "rarity": 3
+    },
+    {
+        "name": {
+            "translations": {
+                "eng": "Midori",
+                "jpn": "ミドリ"
+            }
+        },
+        "rarity": 3
+    },
+    {
+        "name": {
+            "translations": {
                 "jpn": "アカリ",
                 "eng": "Akari"
             }
@@ -326,6 +344,15 @@
     {
         "name": {
             "translations": {
+                "eng": "Momoi",
+                "jpn": "モモイ"
+            }
+        },
+        "rarity": 2
+    },
+    {
+        "name": {
+            "translations": {
                 "jpn": "ノゾミ",
                 "eng": "Nozomi"
             }
@@ -390,7 +417,7 @@
         "name": {
             "translations": {
                 "jpn": "フィーナ",
-                "eng": "Pina"
+                "eng": "Fina"
             }
         },
         "rarity": 1
