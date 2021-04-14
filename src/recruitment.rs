@@ -39,11 +39,7 @@ pub async fn roll(ctx: &Context, msg: &Message) -> CommandResult {
     let student = BANNER.roll();
 
     let eng_name = student.name.get(Language::English).unwrap();
-    let url_name = if eng_name == "Junko" {
-        "Zunko"
-    } else {
-        &eng_name
-    };
+    let url_name = &eng_name;
 
     let img_url = format!("{}/Characters/{}.png", CDN_URL, url_name);
     let title_url = format!("https://www.thearchive.gg/characters/{}", url_name);
