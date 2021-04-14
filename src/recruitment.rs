@@ -18,7 +18,8 @@ use std::time::Instant;
 
 const STUDENTS_JSON: &str = include_str!("../data/students.json");
 const CDN_URL: &str = "https://rerollcdn.com/BlueArchive";
-const BANNER_IMG_URL: &str = "https://pbs.twimg.com/media/EuzV9rdUUAAD2jx?format=jpg&name=large";
+const BANNER_IMG_URL: &str =
+    "https://static.wikia.nocookie.net/blue-archive/images/7/70/Gacha_Banner_07.png";
 const THUMB_WIDTH: u32 = 202; // OG: 404 (2020-02-11) from https://thearchive.gg
 const THUMB_HEIGHT: u32 = 228; // OG: 456 (2020-02-11) from https://thearchive.gg
 
@@ -359,7 +360,7 @@ fn _create_2021_03_18_aru_banner() -> Banner {
 
     BannerBuilder::new("悪は一日にして成らず")
         .with_gacha(gacha)
-        .with_name_translation(Language::English, "Evil does not grow in a single Day")
+        .with_name_translation(Language::English, "Evil is not attained in a single day")
         .with_sparkable_students(sparkable)
         .finish()
         .unwrap()
@@ -436,7 +437,7 @@ fn create_2021_04_08_midori_banner() -> Banner {
 
     BannerBuilder::new("共鳴する風信子")
         .with_gacha(gacha)
-        .with_name_translation(Language::English, "Resonating Wind Nobuko")
+        .with_name_translation(Language::English, "A Hyacinth swaying in the wind")
         .with_sparkable_students(sparkable)
         .finish()
         .unwrap()
