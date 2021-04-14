@@ -5,8 +5,8 @@ use serenity::model::channel::Message;
 use serenity::utils::Colour;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const BOT_SOURCE: &str = "https://github.com/Paoda/arona";
-const GACHA_SOURCE: &str = "https://github.com/Paoda/bluearch-recruitment";
+const BOT_SOURCE: &str = "https://git.paoda.moe/paoda/arona";
+const GACHA_SOURCE: &str = "https://github.com/paoda/blue-gacha";
 const IMG_SOURCE: &str = "https://thearchive.gg";
 pub const BLUE_ARCHIVE_BLUE: Colour = Colour::from_rgb(0, 215, 251);
 
