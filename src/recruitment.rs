@@ -1,10 +1,10 @@
 use crate::general::BLUE_ARCHIVE_BLUE;
 use crate::image::get_image_from_url;
-use bluearch_recruitment::banner::{Banner, BannerBuilder};
-use bluearch_recruitment::gacha::Recruitment as RecruitmentTrait;
-use bluearch_recruitment::gacha::{GachaBuilder, Rarity};
-use bluearch_recruitment::i18n::Language;
-use bluearch_recruitment::student::Student;
+use blue_gacha::banner::{Banner, BannerBuilder};
+use blue_gacha::gacha::Recruitment as RecruitmentTrait;
+use blue_gacha::gacha::{GachaBuilder, Rarity};
+use blue_gacha::i18n::Language;
+use blue_gacha::student::Student;
 use image::jpeg::JpegEncoder;
 use image::{ColorType, ImageEncoder, RgbaImage};
 use lazy_static::lazy_static;
