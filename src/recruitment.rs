@@ -209,16 +209,16 @@ fn _create_2021_02_04_hoshino_shiroko_banner() -> Banner {
     let sparkable = vec![hoshino.student().clone(), shiroko.student().clone()];
     let priority = vec![hoshino, shiroko];
 
-    let gacha = GachaBuilder::new(79.0, 18.5, 2.5)
+    let gacha = GachaBuilder::default()
         .with_pool(pool)
-        .with_priority(&priority)
+        .with_priority(priority)
         .finish()
         .unwrap();
 
     BannerBuilder::new("拝啓、はじまりの季節へ")
-        .with_gacha(&gacha)
+        .with_gacha(gacha)
         .with_name_translation(Language::English, "Dear Sensei, a new season approaches")
-        .with_sparkable_students(&sparkable)
+        .with_sparkable_students(sparkable)
         .finish()
         .unwrap()
 }
@@ -244,16 +244,16 @@ fn _create_2021_02_11_mashiro_banner() -> Banner {
     let sparkable = vec![mashiro.student().clone()];
     let priority = vec![mashiro];
 
-    let gacha = GachaBuilder::new(79.0, 18.5, 2.5)
+    let gacha = GachaBuilder::default()
         .with_pool(pool)
-        .with_priority(&priority)
+        .with_priority(priority)
         .finish()
         .unwrap();
 
     BannerBuilder::new("赤の季節、黒の制服")
-        .with_gacha(&gacha)
+        .with_gacha(gacha)
         .with_name_translation(Language::English, "Red Season, Black Uniform")
-        .with_sparkable_students(&sparkable)
+        .with_sparkable_students(sparkable)
         .finish()
         .unwrap()
 }
@@ -288,14 +288,14 @@ fn create_2021_02_25_izuna_banner() -> Banner {
 
     let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
         .with_pool(pool)
-        .with_priority(&priority)
+        .with_priority(priority)
         .finish()
         .unwrap();
 
     BannerBuilder::new("祭り囃子はしのぶれど")
-        .with_gacha(&gacha)
+        .with_gacha(gacha)
         .with_name_translation(Language::English, "The Concealed Festival Band")
-        .with_sparkable_students(&sparkable)
+        .with_sparkable_students(sparkable)
         .finish()
         .unwrap()
 }
@@ -323,17 +323,17 @@ fn _create_2021_03_11_haruna_banner() -> Banner {
 
     let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
         .with_pool(pool)
-        .with_priority(&priority)
+        .with_priority(priority)
         .finish()
         .unwrap();
 
     BannerBuilder::new("その味は身命を賭してでも")
-        .with_gacha(&gacha)
+        .with_gacha(gacha)
         .with_name_translation(
             Language::English,
             "Even if you risk your life for that taste",
         )
-        .with_sparkable_students(&sparkable)
+        .with_sparkable_students(sparkable)
         .finish()
         .unwrap()
 }
@@ -361,14 +361,14 @@ fn _create_2021_03_18_aru_banner() -> Banner {
 
     let gacha = GachaBuilder::new(ONE_STAR_RATE, TWO_STAR_RATE, THREE_STAR_RATE)
         .with_pool(pool)
-        .with_priority(&priority)
+        .with_priority(priority)
         .finish()
         .unwrap();
 
     BannerBuilder::new("悪は一日にして成らず")
-        .with_gacha(&gacha)
+        .with_gacha(gacha)
         .with_name_translation(Language::English, "Evil does not grow in a single Day")
-        .with_sparkable_students(&sparkable)
+        .with_sparkable_students(sparkable)
         .finish()
         .unwrap()
 }

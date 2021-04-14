@@ -112,7 +112,7 @@ dependencies = [
 [[package]]
 name = "blue-gacha"
 version = "0.1.0"
-source = "git+https://github.com/Paoda/blue-gacha.git?branch=main#3c47ec8d4fe7a717d30fa6941580f9cc36682df4"
+source = "git+https://github.com/Paoda/blue-gacha.git?branch=main#d5df9d4d30ef290ca0a269a9f52f482e284a606a"
 dependencies = [
  "rand 0.8.3",
  "serde",
