@@ -1,4 +1,5 @@
 # Blue Archive Gacha Discord Bot
+[![Build Status](https://ci.paoda.moe/api/badges/paoda/arona/status.svg)](https://ci.paoda.moe/paoda/arona)
 
 Internally, this bot is named Arona / アロナ, but I'm sure every bot that has anything to do with Blue Archive will be called Arona.
 
