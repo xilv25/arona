@@ -4,7 +4,7 @@
 Internally, this bot is named Arona / アロナ, but I'm sure every bot that has anything to do with Blue Archive will be called Arona.
 
 
-## Setupp 
+## Setup 
 `./data/students.json` contains an Array with every student currently (2020-02-09) available in it. Modify as you will to suit your needs.
 
 This Bot uses my [Gacha Sim library](https://github.com/paoda/bluearch-recruitment). You can see what code modifications are necessary
