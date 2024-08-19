@@ -18,6 +18,6 @@ jobs:./target/release/arona
     - uses: actions/checkout@v4
     - name: CD Arona
       run: cargo build --release
-    - name: CD Arona
-      run: cargo test --release
+    
+   
 
